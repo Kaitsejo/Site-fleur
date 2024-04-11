@@ -56,7 +56,14 @@ switch($_GET["action"]) {
     <link href="https://fonts.googleapis.com/css2?family=Pacifico&family=Russo+One&display=swap" rel="stylesheet">
 </head>
 <body>
-    <nav class="navbar navbar-dark bg-dark fixed-top d-flex flex-row">
+<nav class="navbar navbar-dark bg-dark fixed-top d-flex flex-row">
+				<a class="navbar-brand" href="index.php">
+            	   	<img src="fleur.png" width="30" height="30" alt="Fleur">
+                	Fleuropa
+            	</a>
+				<a class="navbar-brand" href="Personnalisation.php">
+              	  Personnalisations
+          		</a>
                 <li class="dropdown">
                         <a class="navbar-brand" href="#" class="dropdown-toggle dropstart" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
                             Nos boutiques
@@ -75,13 +82,8 @@ switch($_GET["action"]) {
                         </ul>
                 </li>
                         
-            <a class="navbar-brand" href="Personnalisation.php">
-                Personnalisations
-            </a>
-            <a class="navbar-brand" href="index.php">
-                <img src="fleur.png" width="30" height="30" alt="Fleur">
-                Fleuropa
-            </a>
+            
+            
             <li class="dropdown">
             <a class="navbar-brand" href="#" class="dropdown-toggle dropleft" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
                 <img src="cart.svg" width="30" height="30" alt="Cart">

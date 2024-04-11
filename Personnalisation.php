@@ -40,6 +40,23 @@ switch($_GET["action"]) {
 	case "empty":
 		unset($_SESSION["personnalisation"]);
 	break;	
+	case "Bouquet":
+		$selected_flowers = $_SESSION["personnalisation"];
+		$bouquet = array(
+			'name' => 'Bouquet Customisé',
+			'code' => '',
+			'quantity' => 1,
+			'price' => 0.0,
+			'image' => 'fleur.png',
+		);
+		foreach ($selected_flowers as $flower) {
+			$bouquet['code'] .= $flower['code'] . ' + ';
+			$bouquet['price'] += $flower['price'] * $flower['quantity'];
+		}
+		$bouquet['name'] = rtrim($bouquet['name'], ' + ');
+		$bouquet['code'] = rtrim($bouquet['code'], ' + ');
+		$_SESSION["cart_item"] = array_merge($_SESSION["cart_item"], $itemArray);
+	break;	
 }
 }
 ?>
@@ -56,6 +73,13 @@ switch($_GET["action"]) {
 </HEAD>
 <BODY>
 <nav class="navbar navbar-dark bg-dark fixed-top d-flex flex-row">
+				<a class="navbar-brand" href="index.php">
+            	   	<img src="fleur.png" width="30" height="30" alt="Fleur">
+                	Fleuropa
+            	</a>
+				<a class="navbar-brand" href="Personnalisation.php">
+              	  Personnalisations
+          		</a>
                 <li class="dropdown">
                         <a class="navbar-brand" href="#" class="dropdown-toggle dropstart" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
                             Nos boutiques
@@ -74,13 +98,8 @@ switch($_GET["action"]) {
                         </ul>
                 </li>
                         
-            <a class="navbar-brand" href="Personnalisation.php">
-                Personnalisations
-            </a>
-            <a class="navbar-brand" href="index.php">
-                <img src="fleur.png" width="30" height="30" alt="Fleur">
-                Fleuropa
-            </a>
+            
+            
             <li class="dropdown">
             <a class="navbar-brand" href="#" class="dropdown-toggle dropleft" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
                 <img src="cart.svg" width="30" height="30" alt="Cart">
