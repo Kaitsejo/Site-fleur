@@ -56,53 +56,82 @@ switch($_GET["action"]) {
 </HEAD>
 <BODY>
 <nav class="navbar navbar-dark bg-dark fixed-top d-flex flex-row">
-        <div class="container-fluid">
-            
-            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavDarkDropdown" aria-controls="navbarNavDarkDropdown" aria-expanded="false" aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarNavDarkDropdown">
-                <ul class="navbar-nav">
-                    <li class="nav-item dropdown">
-                    <section class="d-flex d-flex-row bg-dark justify-content-between text-secondary">
-                        <section>
-                        <a class="nav-link dropdown-toggle" id="Selections" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                            Sélection
+                <li class="dropdown">
+                        <a class="navbar-brand" href="#" class="dropdown-toggle dropstart" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+                            Nos boutiques
                         </a>
-                        <div class="dropdown-menu" aria-labelledby="Selections">
-                            <section>     
-                                <a class="dropdown-item" href="#">Fleurs</a>
-                            </section>
-                            <section>
-                                <a class="dropdown-item" href="#">Bouquets</a>
-                            </section>
-                            <section>
-                                <a class="dropdown-item" href="Personnalisation.php">Personnalisations</a>
-                            </section>
-                        </div>
-                        </section>
-                        <section>
-                        <a class="nav-link dropdown-toggle align-items-start" href="#" id="Boutiques" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                            Boutiques
-                        </a>
-                        <div class="dropdown-menu" aria-labelledby="Boutiques">
-                            <a class="dropdown-item" href="#">a</a>
-                            <a class="dropdown-item" href="#">b</a>
-                            <a class="dropdown-item" href="#">c</a>
-                        </div>
-                    </section>
-                </section>
-                    </li>
-                </ul>
-            </div>
+                        <ul class="dropdown-menu bg-dark text-light">
+                        <?php
+						$boutique = $db_handle->runQuery("SELECT * FROM boutique ORDER BY ZIPCODE ASC");
+						if (!empty($boutique)) {
+							foreach ($boutique as $b) {
+								echo '<li>' . $b["Adresse"] . " " . " " . $b["name"] . ' (' . $b["ZIPCODE"] . ')' . '</li>';
+							}
+						} else {
+							echo '<p>Aucune boutique trouvée.</p>';
+						}
+						?>
+                        </ul>
+                </li>
+                        
+            <a class="navbar-brand" href="Personnalisation.php">
+                Personnalisations
+            </a>
             <a class="navbar-brand" href="index.php">
                 <img src="fleur.png" width="30" height="30" alt="Fleur">
                 Fleuropa
             </a>
-            <a class="navbar-brand" href="panier.php">
+            <li class="dropdown">
+            <a class="navbar-brand" href="#" class="dropdown-toggle dropleft" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
                 <img src="cart.svg" width="30" height="30" alt="Cart">
                 Panier
             </a>
+            <ul class="dropdown-menu dropdown-menu-right bg-dark text-dark text-center">
+                <section class="bg-light">
+                   <?php
+                        if(isset($_SESSION["cart_item"])){
+                            $total_quantity = 0;
+                            $total_price = 0;
+                        ?>	
+                        <table class="tbl-cart" cellpadding="10" cellspacing="1">
+                        <tbody>	
+                        <?php		
+                            foreach ($_SESSION["cart_item"] as $item){
+                                $item_price = $item["quantity"]*$item["price"];
+                                ?>
+                                        <tr>
+                                        <td><img src="<?php echo $item["image"]; ?>" class="cart-item-image" /><?php echo $item["name"]; ?></td>
+                                        <td style="text-align:right;"><?php echo $item["quantity"]; ?></td>
+                                        <td  style="text-align:right;"><?php echo "$ ".$item["price"]; ?></td>
+                                        <td  style="text-align:right;"><?php echo "$ ". number_format($item_price,2); ?></td>
+                                        <td style="text-align:center;"><a href="index.php?action=remove&code=<?php echo $item["code"]; ?>" class="btnRemoveAction"><img src="icon-delete.png" alt="Remove Item" /></a></td>
+                                        </tr>
+                                        <?php
+                                        $total_quantity += $item["quantity"];
+                                        $total_price += ($item["price"]*$item["quantity"]);
+                                }
+                                ?>
+
+                        <tr>
+                        <td colspan="2" align="right">Total:</td>
+                        <td align="right"><?php echo $total_quantity; ?></td>
+                        <td align="right" colspan="2"><strong><?php echo "$ ".number_format($total_price, 2); ?></strong></td>
+                        <td></td>
+                        </tr>
+                        </tbody>
+                        </table>		
+                        <?php
+                        } else {
+                        ?>
+                        <div class="no-records">Votre panier est vide</div>
+                        <?php 
+                        }
+                        ?>
+                </section>
+                        <a class="btn btn-danger" href="Personnalisation.php?action=empty">Vider son panier</a>
+                        <a href="panier.php" class="btn btn-primary">Voir mon panier</a>
+            </ul>
+            </li>
         </div>
     </nav>
 <div id="shopping-cart">
@@ -184,7 +213,7 @@ if(isset($_SESSION["personnalisation"])){
 						<!-- Product price-->
 						<?php echo "$".$product_array[$key]["price"];?> <br>
 						</div>
-						<div class="btn mt-auto"><input type="text" class="product-quantity" name="quantity" value="1" size="2" /><input type="submit" value="Add to Cart" class="btnAddAction" /></div>
+						<div class="btn mt-auto"><input type="text" class="product-quantity" name="quantity" value="1" size="2" /><input type="submit" value="Ajouter au bouquet" class="btnAddAction" /></div>
 						</form>
 					</div>
                 </div>
@@ -197,7 +226,9 @@ if(isset($_SESSION["personnalisation"])){
             </div>
         </div>
     </section>
-
+	<footer class="py-5 bg-dark">
+        <div class="container"><p class="m-0 text-center text-white">Copyright &copy; fleuropa YONG Nicolas</p></div>
+    </footer>
     <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/popper.js@1.14.7/dist/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
