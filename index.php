@@ -65,24 +65,37 @@ switch($_GET["action"]) {
 				<a class="navbar-brand" href="Personnalisation.php">
               	  Personnalisations
           		</a>
-                <li class="dropdown">
-                        <a class="navbar-brand" href="#" class="dropdown-toggle dropstart" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
-                            Nos boutiques
-                        </a>
-                        <ul class="dropdown-menu bg-dark text-light">
-                        <?php
-						$boutique = $db_handle->runQuery("SELECT * FROM boutique ORDER BY ZIPCODE ASC");
-						if (!empty($boutique)) {
-							foreach ($boutique as $b) {
-								echo ' <li><hr class="dropdown-divider"></li> <li class="text-center">' . $b["Adresse"] . " " . " " . $b["name"] . ' (' . $b["ZIPCODE"] . ')' . '</li>';
-							}
-						} else {
-							echo '<p>Aucune boutique trouvée.</p>';
-						}
-						?>
-                        </ul>
-                </li>
-                        
+                  <li class="dropdown">
+    <a class="navbar-brand dropdown-hover dropstart" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+        Nos boutiques
+    </a>
+    <ul class="dropdown-menu dropright bg-dark text-light">
+        <?php
+            $boutiquesByZipCode = $db_handle->runQuery("SELECT ZIPCODE FROM boutique GROUP BY ZIPCODE ORDER BY ZIPCODE ASC");
+
+            if (!empty($boutiquesByZipCode)) {
+                foreach ($boutiquesByZipCode as $zipCode) {
+                    echo '<li class="dropdown-submenu">';
+                    echo '<a class="dropdown-item dropdown-hover" href="#">(' . $zipCode["ZIPCODE"] . ')</a>';
+                    echo '<ul class="dropdown-menu">';
+                    $boutiques = $db_handle->runQuery("SELECT name, Adresse FROM boutique WHERE ZIPCODE=" . $zipCode["ZIPCODE"]);
+                    if (!empty($boutiques)) {
+                        foreach ($boutiques as $boutique) {
+                            echo '<li><a class="dropdown-item" href="#">' . $boutique["name"] . ', ' . $boutique["Adresse"] . '</a></li>';
+                        }
+                    } else {
+                        echo '<li><a class="dropdown-item" href="#">Aucune boutique trouvée.</a></li>';
+                    }
+                    echo '</ul>';
+                    echo '</li>';
+                }
+            } else {
+                echo '<li><a class="dropdown-item" href="#">Aucune boutique trouvée.</a></li>';
+            }
+        ?>
+    </ul>
+</li>
+ 
             
             
             <li class="dropdown">
