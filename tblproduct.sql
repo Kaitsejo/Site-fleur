@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 --
 -- Table structure for table `tblproduct`
 --
@@ -73,4 +74,3 @@ ALTER TABLE `tblproduct`
 --
 ALTER TABLE `tblproduct`
   MODIFY `id` int(8) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
-COMMIT;
