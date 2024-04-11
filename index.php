@@ -78,7 +78,7 @@ switch($_GET["action"]) {
                                 <a class="dropdown-item" href="#">Bouquets</a>
                             </section>
                             <section>
-                                <a class="dropdown-item" href="#">Personnalisations</a>
+                                <a class="dropdown-item" href="Personnalisation.php">Personnalisations</a>
                             </section>
                         </div>
                         </section>
@@ -86,17 +86,25 @@ switch($_GET["action"]) {
                         <a class="nav-link dropdown-toggle align-items-start" href="#" id="Boutiques" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                             Boutiques
                         </a>
-                        <div class="dropdown-menu" aria-labelledby="Boutiques">
-                            <a class="dropdown-item" href="#">a</a>
-                            <a class="dropdown-item" href="#">b</a>
-                            <a class="dropdown-item" href="#">c</a>
+                        <?php
+						$boutique = $db_handle->runQuery("SELECT * FROM boutique ORDER BY ZIPCODE ASC");
+						if (!empty($boutique)) {
+							echo '<ul>';
+							foreach ($boutique as $b) {
+								echo '<li>' . $b["Adresse"] . " " . " " . $b["name"] . ' (' . $b["ZIPCODE"] . ')' . '</li>';
+							}
+							echo '</ul>';
+						} else {
+							echo '<p>Aucune boutique trouvée.</p>';
+						}
+						?>
                         </div>
                     </section>
                 </section>
                     </li>
                 </ul>
             </div>
-            <a class="navbar-brand" href="#">
+            <a class="navbar-brand" href="index.php">
                 <img src="fleur.png" width="30" height="30" alt="Fleur">
                 Fleuropa
             </a>
