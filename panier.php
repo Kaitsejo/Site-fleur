@@ -77,7 +77,7 @@ switch($_GET["action"]) {
                                 <a class="dropdown-item" href="#">Bouquets</a>
                             </section>
                             <section>
-                                <a class="dropdown-item" href="#">Personnalisations</a>
+                                <a class="dropdown-item" href="Personnalisation.php">Personnalisations</a>
                             </section>
                         </div>
                         </section>
@@ -108,7 +108,7 @@ switch($_GET["action"]) {
 <div id="shopping-cart">
 <div class="txt-heading">Shopping Cart</div>
 
-<a id="btnEmpty" href="index.php?action=empty">Empty Cart</a>
+<a id="btnEmpty" href="panier.php?action=empty">Vider son panier</a>
 <?php
 if(isset($_SESSION["cart_item"])){
     $total_quantity = 0;
@@ -134,7 +134,7 @@ if(isset($_SESSION["cart_item"])){
 				<td style="text-align:right;"><?php echo $item["quantity"]; ?></td>
 				<td  style="text-align:right;"><?php echo "$ ".$item["price"]; ?></td>
 				<td  style="text-align:right;"><?php echo "$ ". number_format($item_price,2); ?></td>
-				<td style="text-align:center;"><a href="index.php?action=remove&code=<?php echo $item["code"]; ?>" class="btnRemoveAction"><img src="icon-delete.png" alt="Remove Item" /></a></td>
+				<td style="text-align:center;"><a href="panier.php?action=remove&code=<?php echo $item["code"]; ?>" class="btnRemoveAction"><img src="icon-delete.png" alt="Remove Item" /></a></td>
 				</tr>
 				<?php
 				$total_quantity += $item["quantity"];
@@ -153,11 +153,14 @@ if(isset($_SESSION["cart_item"])){
   <?php
 } else {
 ?>
-<div class="no-records">Your Cart is Empty</div>
+<div class="no-records">Votre panier est vide</div>
 <?php 
 }
 ?>
 </div>
 
+<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.14.7/dist/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
 </BODY>
 </HTML>

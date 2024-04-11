@@ -6,47 +6,46 @@ if(!empty($_GET["action"])) {
 switch($_GET["action"]) {
 	case "add":
 		if(!empty($_POST["quantity"])) {
-			$productByCode = $db_handle->runQuery("SELECT * FROM tblproduct WHERE code='" . $_GET["code"] . "'");
-			$itemArray = array($productByCode[0]["code"]=>array('name'=>$productByCode[0]["name"], 'code'=>$productByCode[0]["code"], 'quantity'=>$_POST["quantity"], 'price'=>$productByCode[0]["price"], 'image'=>$productByCode[0]["image"]));
+			$productByCode = $db_handle->runQuery("SELECT * FROM fleur WHERE code='" . $_GET["code"] . "'");
+			$itemArray = array($productByCode[0]["code"] => array('name' => $productByCode[0]["name"], 'code' => $productByCode[0]["code"], 'quantity' => $_POST["quantity"], 'price' => $productByCode[0]["price"], 'image' => $productByCode[0]["image"]));
 			
-			if(!empty($_SESSION["cart_item"])) {
-				if(in_array($productByCode[0]["code"],array_keys($_SESSION["cart_item"]))) {
-					foreach($_SESSION["cart_item"] as $k => $v) {
+			if(!empty($_SESSION["personnalisation"])) {
+				if(in_array($productByCode[0]["code"],array_keys($_SESSION["personnalisation"]))) {
+					foreach($_SESSION["personnalisation"] as $k => $v) {
 							if($productByCode[0]["code"] == $k) {
-								if(empty($_SESSION["cart_item"][$k]["quantity"])) {
-									$_SESSION["cart_item"][$k]["quantity"] = 0;
+								if(empty($_SESSION["personnalisation"][$k]["quantity"])) {
+									$_SESSION["personnalisation"][$k]["quantity"] = 0;
 								}
-								$_SESSION["cart_item"][$k]["quantity"] += $_POST["quantity"];
+								$_SESSION["personnalisation"][$k]["quantity"] += $_POST["quantity"];
 							}
 					}
 				} else {
-					$_SESSION["cart_item"] = array_merge($_SESSION["cart_item"],$itemArray);
+					$_SESSION["personnalisation"] = array_merge($_SESSION["personnalisation"],$itemArray);
 				}
 			} else {
-				$_SESSION["cart_item"] = $itemArray;
+				$_SESSION["personnalisation"] = $itemArray;
 			}
 		}
 	break;
 	case "remove":
-		if(!empty($_SESSION["cart_item"])) {
-			foreach($_SESSION["cart_item"] as $k => $v) {
+		if(!empty($_SESSION["personnalisation"])) {
+			foreach($_SESSION["personnalisation"] as $k => $v) {
 					if($_GET["code"] == $k)
-						unset($_SESSION["cart_item"][$k]);				
-					if(empty($_SESSION["cart_item"]))
-						unset($_SESSION["cart_item"]);
+						unset($_SESSION["personnalisation"][$k]);				
+					if(empty($_SESSION["personnalisation"]))
+						unset($_SESSION["personnalisation"]);
 			}
 		}
 	break;
 	case "empty":
-		unset($_SESSION["cart_item"]);
+		unset($_SESSION["personnalisation"]);
 	break;	
 }
 }
 ?>
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
+<HTML>
+<HEAD>
+<meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
     <title>Fleuropa</title>
@@ -54,9 +53,9 @@ switch($_GET["action"]) {
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Pacifico&family=Russo+One&display=swap" rel="stylesheet">
-</head>
-<body>
-    <nav class="navbar navbar-dark bg-dark fixed-top d-flex flex-row">
+</HEAD>
+<BODY>
+<nav class="navbar navbar-dark bg-dark fixed-top d-flex flex-row">
         <div class="container-fluid">
             
             <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavDarkDropdown" aria-controls="navbarNavDarkDropdown" aria-expanded="false" aria-label="Toggle navigation">
@@ -67,7 +66,7 @@ switch($_GET["action"]) {
                     <li class="nav-item dropdown">
                     <section class="d-flex d-flex-row bg-dark justify-content-between text-secondary">
                         <section>
-                        <a class="nav-link dropdown-toggle" href="#" id="Selections" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        <a class="nav-link dropdown-toggle" id="Selections" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                             Sélection
                         </a>
                         <div class="dropdown-menu" aria-labelledby="Selections">
@@ -86,18 +85,10 @@ switch($_GET["action"]) {
                         <a class="nav-link dropdown-toggle align-items-start" href="#" id="Boutiques" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                             Boutiques
                         </a>
-                        <?php
-						$boutique = $db_handle->runQuery("SELECT * FROM boutique ORDER BY ZIPCODE ASC");
-						if (!empty($boutique)) {
-							echo '<ul>';
-							foreach ($boutique as $b) {
-								echo '<li>' . $b["Adresse"] . " " . " " . $b["name"] . ' (' . $b["ZIPCODE"] . ')' . '</li>';
-							}
-							echo '</ul>';
-						} else {
-							echo '<p>Aucune boutique trouvée.</p>';
-						}
-						?>
+                        <div class="dropdown-menu" aria-labelledby="Boutiques">
+                            <a class="dropdown-item" href="#">a</a>
+                            <a class="dropdown-item" href="#">b</a>
+                            <a class="dropdown-item" href="#">c</a>
                         </div>
                     </section>
                 </section>
@@ -114,29 +105,74 @@ switch($_GET["action"]) {
             </a>
         </div>
     </nav>
-    <!-- Header-->
-    <header class="py-5" style="background-image: url(bg-fleur.jpg);">
-        <div class="container px-4 px-lg-5 my-5">
-            <div class="text-center text-dark">
-                <h1 class="pacifico-regular display-4 fw-bolder">Fleuropa</h1>
-                <p class="russo-one-regular text-dark-50 mb-0">Les plus belles fleurs d'Europe</p>
-            </div>
-        </div>
-    </header>
-    <!-- Section-->
-    <section class="py-5">
+<div id="shopping-cart">
+<div class="txt-heading">Shopping Cart</div>
+
+<a id="btnEmpty" href="personnalisation.php?action=empty">Supprimer sa personnalisation</a>
+<?php
+if(isset($_SESSION["personnalisation"])){
+    $total_quantity = 0;
+    $total_price = 0;
+?>	
+<table class="tbl-cart" cellpadding="10" cellspacing="1">
+<tbody>
+<tr>
+<th style="text-align:left;">Name</th>
+<th style="text-align:left;">Code</th>
+<th style="text-align:right;" width="5%">Quantity</th>
+<th style="text-align:right;" width="10%">Unit Price</th>
+<th style="text-align:right;" width="10%">Price</th>
+<th style="text-align:center;" width="5%">Remove</th>
+</tr>	
+<?php		
+    foreach ($_SESSION["personnalisation"] as $item){
+        $item_price = $item["quantity"]*$item["price"];
+		?>
+				<tr>
+				<td><img src="<?php echo $item["image"]; ?>" class="cart-item-image" /><?php echo $item["name"]; ?></td>
+				<td><?php echo $item["code"]; ?></td>
+				<td style="text-align:right;"><?php echo $item["quantity"]; ?></td>
+				<td  style="text-align:right;"><?php echo "$ ".$item["price"]; ?></td>
+				<td  style="text-align:right;"><?php echo "$ ". number_format($item_price,2); ?></td>
+				<td style="text-align:center;"><a href="personnalisation.php?action=remove&code=<?php echo $item["code"]; ?>" class="btnRemoveAction"><img src="icon-delete.png" alt="Remove Item" /></a></td>
+				</tr>
+				<?php
+				$total_quantity += $item["quantity"];
+				$total_price += ($item["price"]*$item["quantity"]);
+		}
+		?>
+
+<tr>
+<td colspan="2" align="right">Total:</td>
+<td align="right"><?php echo $total_quantity; ?></td>
+<td align="right" colspan="2"><strong><?php echo "$ ".number_format($total_price, 2); ?></strong></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+		
+  <?php
+} else {
+?>
+<div class="no-records">Pas encore de personnalisation</div>
+<?php 
+}
+?>
+</div>
+
+<section class="py-5">
         <div class="container px-4 px-lg-5 mt-5">
             <div class="row gx-4 gx-lg-5 row-cols-2 row-cols-md-3 row-cols-xl-4 justify-content-around">
 				<?php
-				$product_array = $db_handle->runQuery("SELECT * FROM tblproduct ORDER BY id ASC");
+				$product_array = $db_handle->runQuery("SELECT * FROM fleur ORDER BY id ASC");
 				if (!empty($product_array)) { 
 					foreach($product_array as $key=>$value){
 				?>
 				<div class="row gx-4 gx-lg-5 row-cols-2 row-cols-md-3 row-cols-xl-4 justify-content-center">
                 <div class="col mb-5 text-center justify-content-center">
-				<form method="post" action="index.php?action=add&code=<?php echo $product_array[$key]["code"]; ?>">
+				<form method="post" action="Personnalisation.php?action=add&code=<?php echo $product_array[$key]["code"]; ?>">
 					<div class="product-item">
-						<form method="post" action="index.php?action=add&code=<?php echo $product_array[$key]["code"]; ?>">
+						<form method="post" action="Personnalisation.php?action=add&code=<?php echo $product_array[$key]["code"]; ?>">
 						 <!-- Product image-->
 						<div class="image-top"><img src="<?php echo $product_array[$key]["image"]; ?>"></div>
 						<!-- Product details-->
@@ -161,14 +197,9 @@ switch($_GET["action"]) {
             </div>
         </div>
     </section>
-    <!-- Footer-->
-    <footer class="py-5 bg-dark">
-        <div class="container"><p class="m-0 text-center text-white">Copyright &copy; Your Website 2023</p></div>
-    </footer>
-
 
     <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/popper.js@1.14.7/dist/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
-</body>
-</html>
+</BODY>
+</HTML>
